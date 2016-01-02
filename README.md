@@ -40,6 +40,10 @@ func main() {
 $ go get -u github.com/bluele/logrus_slack
 ```
 
+## Credits 
+
+This project based on [slackrus](https://github.com/johntdyer/slackrus)
+
 ## Author
 
 **Jun Kimura**
