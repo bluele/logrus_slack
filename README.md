@@ -7,7 +7,7 @@
 package main
 
 import (
-	logrus "github.com/Sirupsen/logrus"
+	"github.com/Sirupsen/logrus"
 	"github.com/bluele/logrus_slack"
 )
 
