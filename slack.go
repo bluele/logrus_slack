@@ -35,8 +35,10 @@ You can specify hook options via `SlackHook` attributes.
 package logrus_slack
 
 import (
+	"errors"
 	"github.com/Sirupsen/logrus"
 	"github.com/bluele/slack"
+	"time"
 )
 
 // SlackHook is a logrus Hook for dispatching messages to the specified
@@ -53,8 +55,9 @@ type SlackHook struct {
 	IconEmoji string // emoji string ex) ":ghost:":
 	IconURL   string // icon url
 
-	FieldHeader string // a header above field data
-	Async       bool   // if async is true, send a message asynchronously.
+	FieldHeader string        // a header above field data
+	Timeout     time.Duration // request timeout
+	Async       bool          // if async is true, send a message asynchronously.
 
 	hook *slack.WebHook
 }
@@ -102,10 +105,31 @@ func (sh *SlackHook) Fire(e *logrus.Entry) error {
 	attachment.Color = color
 
 	if sh.Async {
-		go sh.hook.PostMessage(payload)
+		go sh.postMessage(payload)
 		return nil
 	}
-	return sh.hook.PostMessage(payload)
+
+	return sh.postMessage(payload)
+}
+
+func (sh *SlackHook) postMessage(payload *slack.WebHookPostPayload) error {
+	if sh.Timeout <= 0 {
+		return sh.hook.PostMessage(payload)
+	}
+
+	ech := make(chan error, 1)
+	go func(ch chan error) {
+		ch <- nil
+		ch <- sh.hook.PostMessage(payload)
+	}(ech)
+	<-ech
+
+	select {
+	case err := <-ech:
+		return err
+	case <-time.After(sh.Timeout):
+		return TimeoutError
+	}
 }
 
 // Levels sets which levels to sent to slack
@@ -134,6 +158,8 @@ var AllLevels = []logrus.Level{
 	logrus.FatalLevel,
 	logrus.PanicLevel,
 }
+
+var TimeoutError = errors.New("Request timed out")
 
 // LevelThreshold - Returns every logging level above and including the given parameter.
 func LevelThreshold(l logrus.Level) []logrus.Level {

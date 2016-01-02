@@ -25,6 +25,7 @@ func main() {
 		Channel:        "#general",
 		IconEmoji:      ":ghost:",
 		Username:       "logrus_slack",
+		Timeout:        5 * time.Second, // request timeout for calling slack api
 	})
 
 	logrus.WithFields(logrus.Fields{"foo": "bar", "foo2": "bar2"}).Warn("this is a warn level message")
