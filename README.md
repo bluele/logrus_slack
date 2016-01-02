@@ -1,4 +1,5 @@
 # Slack Hooks for Logrus <img src="http://i.imgur.com/hTeVwmJ.png" width="40" height="40" alt=":walrus:" class="emoji" title=":walrus:"/>
+[![GoDoc](https://godoc.org/github.com/bluele/logrus_slack?status.png)](https://godoc.org/github.com/bluele/logrus_slack)
 
 ## Example
 
