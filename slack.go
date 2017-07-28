@@ -4,8 +4,8 @@ Slack Hooks for Logrus
 	package main
 
 	import (
-		"github.com/Sirupsen/logrus"
 		"github.com/bluele/logrus_slack"
+		"github.com/sirupsen/logrus"
 	)
 
 	const (
@@ -36,8 +36,8 @@ package logrus_slack
 
 import (
 	"errors"
-	"github.com/Sirupsen/logrus"
 	"github.com/bluele/slack"
+	"github.com/sirupsen/logrus"
 	"time"
 )
 
