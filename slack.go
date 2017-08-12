@@ -36,9 +36,11 @@ package logrus_slack
 
 import (
 	"errors"
+	"fmt"
+	"time"
+
 	"github.com/bluele/slack"
 	"github.com/sirupsen/logrus"
-	"time"
 )
 
 // SlackHook is a logrus Hook for dispatching messages to the specified
@@ -87,13 +89,15 @@ func (sh *SlackHook) Fire(e *logrus.Entry) error {
 		for k, v := range e.Data {
 			field := &slack.AttachmentField{}
 
+			field.Title = k
 			if str, ok := v.(string); ok {
-				field.Title = k
 				field.Value = str
-				// If the field is <= 20 then we'll set it to short
-				if len(str) <= 20 {
-					field.Short = true
-				}
+			} else {
+				field.Value = fmt.Sprint(v)
+			}
+			// If the field is <= 20 then we'll set it to short
+			if len(field.Value) <= 20 {
+				field.Short = true
 			}
 			attachment.Fields = append(attachment.Fields, field)
 		}
